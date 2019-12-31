@@ -15,11 +15,6 @@ namespace Motivo.ApiModels
 		/// <summary>
 		/// The user's username
 		/// </summary>
-		public string FirstName { get; set; }
-
-		/// <summary>
-		/// The user's email
-		/// </summary>
-		public string Email { get; set; }
+		public string Username { get; set; }
 	}
 }

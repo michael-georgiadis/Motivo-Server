@@ -1,26 +1,18 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.IdentityModel.Tokens.Jwt;
-using System.Runtime.InteropServices;
-using System.Security.Claims;
-using System.Text;
-using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 using Motivo.ApiModels;
 using Motivo.Data;
-using Motivo.IoC;
-using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
+using System.Linq;
 
-namespace Motivo.Controllers
+
+namespace Motivo
 {
 	[ApiController]
-	[Route("motivoApi/[controller]")]
+	[Route(UserActionsRoutes.Controller)]
 	public class UserActionsController : ControllerBase
 	{
 		protected MotivoDbContext _motivoDbContext;
@@ -42,8 +34,9 @@ namespace Motivo.Controllers
 			_userManager = userManager;
 			_signInManager = signInManager;
 		}
+
 		[AllowAnonymous]
-		[Route("login")]
+		[Route(UserActionsRoutes.Login)]
 		public async Task<ApiResponse<LoginResultApiModel>> LoginAsync([FromBody] LoginCredentialsApiModel loginCredentials)
 		{
 			var errorResponse = new ApiResponse<LoginResultApiModel>
@@ -53,11 +46,11 @@ namespace Motivo.Controllers
 			};
 
 			// Make sure we have an email
-			if (loginCredentials?.Email == null || string.IsNullOrWhiteSpace(loginCredentials.Email))
+			if (loginCredentials?.Username == null || string.IsNullOrWhiteSpace(loginCredentials.Username))
 				return errorResponse;
 
 			// Validate if the user credentials are correct
-			var user = await _userManager.FindByEmailAsync(loginCredentials?.Email);
+			var user = await _userManager.FindByNameAsync(loginCredentials?.Username);
 
 			// if we failed to found the user
 			if (user == null)
@@ -69,57 +62,66 @@ namespace Motivo.Controllers
 			if (!isValidPassword)
 				return errorResponse;
 
-			// At this point we have the correct login credentials
-			var username = user.UserName;
-
-			var claims = new[]
-			{
-				new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N")),
-				new Claim(ClaimsIdentity.DefaultNameClaimType, username),
-			};
-
-			var credentials = new SigningCredentials(
-				new SymmetricSecurityKey(Encoding.UTF8.GetBytes(IoCContainer.Configuration["Jwt:SecretKey"])),
-				SecurityAlgorithms.HmacSha256);
-
-			var token = new JwtSecurityToken(
-				issuer: IoCContainer.Configuration["Jwt:Issuer"],
-				audience: IoCContainer.Configuration["Jwt:Audience"],
-				claims: claims,
-				signingCredentials: credentials,
-				expires: DateTime.Now.AddMonths(3));
-
-
-			var httpUser = HttpContext.User;
-
 
 			return new ApiResponse<LoginResultApiModel>
 			{
 				// Pass the user's username and the token
 				Response = new LoginResultApiModel
 				{
-					FirstName = user.UserName,
-					Email = user.Email,
-					Token = new JwtSecurityTokenHandler().WriteToken(token)
+					Username = user.UserName,
+					Token = user.GenerateJwtToken()
 				}
 			};
 		}
 
 		[AllowAnonymous]
-		[Route("register")]
-		public async Task<IActionResult> CreateUserAsync()
+		[Route(UserActionsRoutes.Register)]
+		public async Task<ApiResponse<RegisterResultApiModel>> CreateUserAsync([FromBody] RegisterCredentialsApiModel registerCredentials)
 		{
+			var errorResponse = new ApiResponse<RegisterResultApiModel>
+			{
+				ErrorMessage = "Please provide all required fields to register for an account"
+			};
+
+			if (registerCredentials == null)
+				return errorResponse;
+
+			// Check if any of the fields are null
+			if (string.IsNullOrWhiteSpace(registerCredentials.Username) || 
+				string.IsNullOrWhiteSpace(registerCredentials.Email) || 
+				string.IsNullOrWhiteSpace(registerCredentials.Password))
+				return errorResponse;
+
+			// Try and create user
 			var result = await _userManager.CreateAsync(new MotivoUser
 			{
-				UserName = "Funnyman322",
-				//Email = "mikegeor@outlook.com",
-				FirstName = "Michael",
-			}, "233V!ckylp");
+				UserName = registerCredentials.Username,
+				Email = registerCredentials.Email,
+			}, registerCredentials.Password);
 
+
+			// If the registration was successful
 			if (result.Succeeded)
-				return Content("User was created", "text/html");
-
-			return Content("User creation failed", "text/html");
+			{
+				var userIdentity = await _userManager.FindByNameAsync(registerCredentials.Username);
+				return new ApiResponse<RegisterResultApiModel>
+				{
+					Response = new RegisterResultApiModel
+					{
+						Username = userIdentity.UserName,
+						Email = userIdentity.Email
+					}
+				};
+			}
+			// Otherwise it failed
+			else
+			{
+				// Return the failed response
+				return new ApiResponse<RegisterResultApiModel>
+				{
+					ErrorMessage = result.Errors?.AggregateErrors()
+				};
+			}
 		}
 	}
 }

@@ -11,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Motivo.Data;
-using Motivo.IoC;
 
 namespace Motivo
 {
@@ -49,12 +48,19 @@ namespace Motivo
 						ValidateAudience = true,
 						ValidateLifetime = true,
 						ValidateIssuerSigningKey = true,
-						ValidIssuer = IoCContainer.Configuration["Jwt:JwtIssuer"],
-						ValidAudience = IoCContainer.Configuration["Jwt:JwtAudience"],
+						ValidIssuer = IoCContainer.Configuration["Jwt:Issuer"],
+						ValidAudience = IoCContainer.Configuration["Jwt:Audience"],
 						IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(IoCContainer.Configuration["Jwt:SecretKey"]))
 					};
 				});
-			
+
+			// Change Password Policy
+			services.Configure<IdentityOptions>(options =>
+			{
+				//Make weaker passwords possible for easier use
+				options.Password.RequireUppercase = false;
+				options.Password.RequireNonAlphanumeric = false;
+			});
 
 			services.AddControllers();
 		}

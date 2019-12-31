@@ -16,5 +16,14 @@ namespace Motivo.Data
 		public string Name { get; set; }
 
 		public MotivoUser User { get; set; }
+
+		[MaxLength(512)]
+		public string Description { get; set; }
+
+		[MaxLength(256)]
+		public int NumericGoal { get; set; }
+
+		[MaxLength(256)]
+		public int NumericCurrent { get; set; }
 	}
 }

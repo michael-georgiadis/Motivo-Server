@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Motivo.Data;
 
-namespace Motivo.IoC
+namespace Motivo
 {
 	public static class IoC
 	{
@@ -18,9 +18,7 @@ namespace Motivo.IoC
 	{
 		public static ServiceProvider Provider { get; set; }
 
-		/// <summary>
-		/// The Configuration manager for the application
-		/// </summary>
+		// The Configuration manager for the application
 		public static IConfiguration Configuration { get; set; }
 
 	}

@@ -8,7 +8,6 @@ namespace Motivo.Data
 {
 	public class MotivoUser : IdentityUser
 	{
-		public string FirstName { get; set; }
 		public List<GoalDataModel> Goals { get; set; }
 	}
 }

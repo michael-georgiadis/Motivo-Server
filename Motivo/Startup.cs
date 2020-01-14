@@ -1,16 +1,18 @@
 using System;
-using System.Collections.Specialized;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.Certificate;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Motivo.Data;
+using Motivo.IoC;
 
 namespace Motivo
 {
@@ -24,6 +26,12 @@ namespace Motivo
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
+            services.AddHttpsRedirection(options =>
+                {
+                    options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+                    options.HttpsPort = 5001;
+                });
+
 			services.AddDbContext<MotivoDbContext>(options =>
 				{
 					options.UseSqlServer(IoCContainer.Configuration.GetConnectionString("DefaultConnection"));
@@ -39,8 +47,9 @@ namespace Motivo
 				// forgot password links, phone number verification
 				.AddDefaultTokenProviders();
 
-			services.AddAuthentication()
-				.AddJwtBearer(options =>
+			services.AddAuthentication(CertificateAuthenticationDefaults.AuthenticationScheme)
+                .AddCertificate(options => { options.AllowedCertificateTypes = CertificateTypes.All; })
+                .AddJwtBearer(options =>
 				{
 					options.TokenValidationParameters = new TokenValidationParameters
 					{
@@ -87,6 +96,7 @@ namespace Motivo
 			{
 				endpoints.MapControllers();
 			});
+
 		}
 	}
 }

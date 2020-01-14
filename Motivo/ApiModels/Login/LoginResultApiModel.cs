@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Motivo.ApiModels
+﻿namespace Motivo.ApiModels.Login
 {
 	public class LoginResultApiModel
 	{

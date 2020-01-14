@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using Motivo.ApiModels.Goals.Outbound;
 
 namespace Motivo.ApiModels
 {
@@ -15,6 +13,16 @@ namespace Motivo.ApiModels
 
 		public string ErrorMessage { get; set; }
 
-		public T Response { get; set; }
-	}
+		public List<T> Response { get; set; }
+    }
+
+
+	/// <summary>
+	///  The response that doesn't need to return an object.
+    /// </summary>
+    public class ApiResponse
+    {
+        public bool Successful => ErrorMessage == null;
+		public string ErrorMessage { get; set; }
+    }
 }

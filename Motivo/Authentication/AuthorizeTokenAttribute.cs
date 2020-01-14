@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 
-
-namespace Motivo
+namespace Motivo.Authentication
 {
     public class AuthorizeTokenAttribute : AuthorizeAttribute
     {

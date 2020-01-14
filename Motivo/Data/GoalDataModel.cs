@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Motivo.Data
 {
@@ -12,18 +8,20 @@ namespace Motivo.Data
 		[Key]
 		public int Id { get; set; }
 
-		[MaxLength(256)]
-		public string Name { get; set; }
+		[MaxLength(256), Required]
+		public string Title { get; set; }
 
+		[ForeignKey("User")]
+		public string UserRefId { get; set; }
 		public MotivoUser User { get; set; }
 
-		[MaxLength(512)]
-		public string Description { get; set; }
-
-		[MaxLength(256)]
+		[MaxLength(256), Required]
 		public int NumericGoal { get; set; }
 
-		[MaxLength(256)]
+		[MaxLength(256), Required]
 		public int NumericCurrent { get; set; }
+
+		[Required, MaxLength(20)]
+		public int AddBy { get; set; }
 	}
 }

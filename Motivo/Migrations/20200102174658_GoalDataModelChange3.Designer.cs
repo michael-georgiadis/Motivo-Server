@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Motivo;
 using Motivo.Data;
@@ -10,9 +11,10 @@ using Motivo.Data;
 namespace Motivo.Migrations
 {
     [DbContext(typeof(MotivoDbContext))]
-    partial class MotivoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200102174658_GoalDataModelChange3")]
+    partial class GoalDataModelChange3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

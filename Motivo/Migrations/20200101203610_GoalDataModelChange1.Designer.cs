@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Motivo;
 using Motivo.Data;
@@ -10,9 +11,10 @@ using Motivo.Data;
 namespace Motivo.Migrations
 {
     [DbContext(typeof(MotivoDbContext))]
-    partial class MotivoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200101203610_GoalDataModelChange1")]
+    partial class GoalDataModelChange1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -158,10 +160,6 @@ namespace Motivo.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AddBy")
-                        .HasColumnType("int")
-                        .HasMaxLength(20);
-
                     b.Property<int>("NumericCurrent")
                         .HasColumnType("int")
                         .HasMaxLength(256);
@@ -175,12 +173,12 @@ namespace Motivo.Migrations
                         .HasColumnType("nvarchar(256)")
                         .HasMaxLength(256);
 
-                    b.Property<string>("UserRefId")
+                    b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserRefId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Goals");
                 });
@@ -305,7 +303,7 @@ namespace Motivo.Migrations
                 {
                     b.HasOne("Motivo.MotivoUser", "User")
                         .WithMany("Goals")
-                        .HasForeignKey("UserRefId");
+                        .HasForeignKey("UserId");
                 });
 #pragma warning restore 612, 618
         }

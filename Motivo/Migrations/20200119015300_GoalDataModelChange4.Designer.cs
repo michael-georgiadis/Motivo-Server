@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Motivo.Data;
 
 namespace Motivo.Migrations
 {
     [DbContext(typeof(MotivoDbContext))]
-    partial class MotivoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200119015300_GoalDataModelChange4")]
+    partial class GoalDataModelChange4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

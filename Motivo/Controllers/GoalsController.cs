@@ -48,8 +48,7 @@ namespace Motivo.Controllers
                     GoalId = goal.Id,
                     NumericCurrent = goal.NumericCurrent,
                     NumericGoal = goal.NumericGoal,
-                    Title = goal.Title,
-                    AddBy = goal.AddBy
+                    Title = goal.Title
                 }).ToListAsync();
 
             return new ApiResponse<GeneralGoal>
@@ -77,7 +76,6 @@ namespace Motivo.Controllers
                     Title = goal.Title,
                     NumericCurrent = goal.NumericCurrent,
                     NumericGoal = goal.NumericGoal,
-                    AddBy = goal.AddBy
                 };
 
                 MotivoDbContext.Goals.Add(newGoal);
@@ -140,7 +138,6 @@ namespace Motivo.Controllers
             {
                 var user = await UserManager.GetUserFromHttpContext(HttpContext);
                 var goalToBeUpdated = await MotivoDbContext.Goals.FirstOrDefaultAsync(dbGoal => dbGoal.Id == goal.GoalId);
-                goalToBeUpdated.AddBy = goal.AddBy;
                 goalToBeUpdated.NumericCurrent = goal.NumericCurrent;
                 goalToBeUpdated.NumericGoal = goal.NumericGoal;
                 goalToBeUpdated.Title = goal.Title;

@@ -18,10 +18,7 @@ namespace Motivo.Data
 		[MaxLength(256), Required]
 		public int NumericGoal { get; set; }
 
-		[MaxLength(256), Required]
+        [MaxLength(256), Required]
 		public int NumericCurrent { get; set; }
-
-		[Required, MaxLength(20)]
-		public int AddBy { get; set; }
-	}
+    }
 }
